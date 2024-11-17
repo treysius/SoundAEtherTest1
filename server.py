@@ -12,7 +12,7 @@ config: configparser = configUtil.load_config('config.ini')
 databaseUtil.db_exists(config.get('Database', 'db_filename'))
 
 #create socket to listen on
-s = socket()
+s = socket(AF_INET, SOCK_STREAM)
 portNum = config.getint('Connections', 'server_port')
 s.bind(("", portNum))
 print("server listening on port "+str(portNum))
@@ -32,6 +32,7 @@ while True:
         case 'data':
             ts = json.dumps(databaseUtil.get_data(config.get('Database', 'db_filename')),indent=4)
             c.send(ts.encode())
+            c.close()
         case 'stream':
             threading.Thread(target=databaseUtil.stream_audio,args=(data[1], c)).start()
-    c.close()
+

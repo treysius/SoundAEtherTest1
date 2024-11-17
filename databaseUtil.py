@@ -3,7 +3,7 @@ import os.path
 import socket
 import sqlite3
 import wave
-import pyaudio
+
 
 #will return all song and playlist data except the audio in the database
 def get_data(filename: "") -> "":
@@ -18,23 +18,24 @@ def stream_audio(songid: int, s: socket.socket):
     #load file
     f = wave.open(str(songid)+r".wav", "rb")
 
-    pya = pyaudio.PyAudio()
+    #send client audio details
+    ad = {'sampwidth':str(f.getsampwidth()),'channels':str(f.getnchannels()),'rate':str(f.getframerate())}
+    ts = json.dumps(ad)
+    s.send(ts.encode())
 
-    stream = pya.open(format = pya.get_format_from_width(f.getsampwidth()),
-                      channels=f.getnchannels(),
-                      rate=f.getframerate(),
-                      output=True)
+    #wait for client to be ready for audio
+    fc = s.recv(1024).decode()
+    if fc==0:
+        return
 
+    #send audio
     data = f.readframes(chunk)
-
     while data:
-        stream.write(data)
+        s.send(data)
         data = f.readframes(chunk)
 
-    stream.stop_stream()
-    stream.close()
-    pya.terminate()
 
+    s.close()
     return
 
 def db_exists(filename:""):
