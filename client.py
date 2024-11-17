@@ -37,3 +37,21 @@ while True:
             ts = "data"
             s.send(ts.encode())
             data = s.recv(1024).decode()
+            print(data)
+            s.close()
+
+        case "2":
+            songID = input("enter the song id to play")
+            # connect to server
+            s = socket()
+            s.connect((serverIP, int(serverPort)))
+
+
+            #start stream
+            ts = "stream "+str(songID)
+            s.send(ts.encode())
+
+        case "3":
+            break
+
+

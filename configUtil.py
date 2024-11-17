@@ -18,3 +18,4 @@ def load_config(filename: "") -> configparser.ConfigParser:
     # if config does exist, load it
     else:
         c.read(filename)
+    return c
