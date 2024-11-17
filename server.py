@@ -1,11 +1,9 @@
 import configparser
 import threading
-
 import configUtil
 import os.path
 from random import randrange
 from socket import *
-
 import databaseUtil
 
 #load config
@@ -36,6 +34,4 @@ while True:
             c.send(databaseUtil.get_data(config.get('Database', 'db_filename')))
         case 'stream':
             threading.Thread(target=databaseUtil.stream_audio,args=(data[1], c)).start()
-
-
-
+    c.close()

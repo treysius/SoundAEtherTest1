@@ -6,7 +6,7 @@ def load_config(filename: "") -> configparser.ConfigParser:
     c = configparser.ConfigParser()
     # if config does not exist, create default config
     if not os.path.isfile(filename):
-        portNum = input("Enter the port number to listen on (this will be stored in the "+filename+" file) ")
+        portNum = 7894
 
         c['Connections'] = {'server_port': portNum}
         c['Database'] = {'db_filename': 'database.db'}
@@ -17,4 +17,4 @@ def load_config(filename: "") -> configparser.ConfigParser:
 
     # if config does exist, load it
     else:
-        c.read("config.ini")
+        c.read(filename)

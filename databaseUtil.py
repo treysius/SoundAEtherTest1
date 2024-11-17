@@ -17,7 +17,7 @@ def stream_audio(songid: int, s: socket.socket):
 def db_exists(filename:""):
     #if database does not exist, create a blank one
     if not os.path.isfile(filename):
-        con = con = sqlite3.connect(filename)
+        con = sqlite3.connect(filename)
         cursor = con.cursor()
         songTable = """ CREATE TABLE SONGS (
         Id INT
