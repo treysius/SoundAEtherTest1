@@ -57,3 +57,23 @@ def db_exists(filename:""):
         Song_Ids TEXT);"""
         cursor.execute(songTable)
         cursor.execute(playlistTable)
+
+    #if audio folder does not exist, make it
+    if not os.path.isdir("audio"):
+        os.mkdir("audio")
+
+#implement these
+def add_song():
+    return
+
+def add_playlist():
+    return
+
+def edit_playlist():
+    return
+
+def remove_song():
+    return
+
+def remove_playlist():
+    return
