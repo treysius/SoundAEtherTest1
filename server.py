@@ -11,7 +11,7 @@ def main():
     config: configparser = configUtil.load_config('config.ini')
 
     #check if database exists
-    databaseUtil.db_exists(config.get('Database', 'db_filename'))
+    db = databaseUtil.DB_Util(config.get('Database', 'db_filename'), config.get('Database', 'audio_dirname'))
 
     #menu to add songs and playlists
     choice = '0'
@@ -25,6 +25,8 @@ def main():
                        "7. exit\n"
                        "Choose an option")
         match choice:
+            case "1":
+                db.add_song(input("enter the path to the audio file"), input("enter the name of the song"), input("enter the artist of the song"), input("enter the album of the song"), input("enter the release date of the song"), input("enter the path to the cover image of the song, or -1 if there is none"))
             case "7":
                 return
 
@@ -48,11 +50,10 @@ def main():
         data = d.split(" ")
         match data[0]:
             case 'data':
-                ts = json.dumps(databaseUtil.get_data(config.get('Database', 'db_filename')),indent=4)
-                c.send(ts.encode())
-                c.close()
+
+                threading.Thread(target=db.get_data, args=(c,)).start()
             case 'stream':
-                threading.Thread(target=databaseUtil.stream_audio,args=(data[1], c)).start()
+                threading.Thread(target=db.stream_audio,args=(data[1], c)).start()
 
 if __name__=="__main__":
     main()

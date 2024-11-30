@@ -9,7 +9,7 @@ def load_config(filename: "") -> configparser.ConfigParser:
         portNum = 7894
 
         c['Connections'] = {'server_port': portNum}
-        c['Database'] = {'db_filename': 'database.db'}
+        c['Database'] = {'db_filename': 'database.db', 'audio_dirname': 'audio'}
 
         # save config file
         with(open(filename, 'w')) as configFile:

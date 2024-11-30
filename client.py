@@ -41,7 +41,9 @@ def main():
                 ts = "data"
                 s.send(ts.encode())
                 data = s.recv(1024).decode()
-                print(data)
+                while not data:
+                    data = s.recv(1024).decode()
+                print(json.loads(data))
                 s.close()
 
             case "2":
