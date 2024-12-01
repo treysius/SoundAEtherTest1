@@ -37,17 +37,10 @@ class DB_Util:
         if not os.path.isdir(audio_dirname):
             os.mkdir(audio_dirname)
 
-    #will return all song and playlist data except the audio in the database
+    #will send the client all song and playlist data in the database
     def get_data(self, s: socket.socket):
-        #get data
-        conn = sqlite3.connect(self.db_filename)
-        cursor = conn.cursor()
-        cursor.execute("""SELECT * FROM SONGS""")
-        data = cursor.fetchall()
-        cursor.close()
-        conn.close()
 
-        ts = json.dumps(str(data), indent=4)
+        ts = self.data_to_string()
         s.sendall(ts.encode())
 
         return

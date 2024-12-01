@@ -43,7 +43,7 @@ def main():
                 data = s.recv(1024).decode()
                 while not data:
                     data = s.recv(1024).decode()
-                print(json.loads(data))
+                print(data)
                 s.close()
 
             case "2":
