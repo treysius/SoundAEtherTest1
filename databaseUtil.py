@@ -16,12 +16,14 @@ class DB_Util:
             con = sqlite3.connect(db_filename)
             cursor = con.cursor()
             songTable = """ CREATE TABLE SONGS (
+            Id INTEGER PRIMARY KEY,
             Name TEXT,
             Artist TEXT,
             Album TEXT,
             Release_Date TEXT,
             Cover_IMG BLOB);"""
             playlistTable = """CREATE TABLE PLAYLISTS (
+            Id INTEGER PRIMARY KEY,
             Name TEXT,
             Song_Ids TEXT);"""
             cursor.execute(songTable)
@@ -63,7 +65,7 @@ class DB_Util:
         s.send(ts.encode())
 
         #wait for client to be ready for audio
-        fc = s.recv(1024).decode()
+        fc = s.recv(chunk).decode()
         if fc==0:
             return
 
@@ -109,7 +111,7 @@ class DB_Util:
         #add to database
         cursor.execute("""INSERT INTO SONGS (Name, Artist, Album, Release_Date, Cover_IMG) VALUES (?, ?, ?, ?, ?)""", (name, artist,album, releaseDate, imgBytes))
         #get song id
-        cursor.execute("""SELECT rowid FROM SONGS ORDER BY rowid DESC LIMIT 1""")
+        cursor.execute("""SELECT Id FROM SONGS ORDER BY Id DESC LIMIT 1""")
         conn.commit()
         sid = cursor.fetchone()[0]
 
@@ -121,14 +123,53 @@ class DB_Util:
 
         return 1
 
-    def add_playlist(self):
+    def add_playlist(self, name:"", sids:list[int]):
+        conn = sqlite3.connect(self.db_filename)
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO PLAYLISTS (Name, Song_Ids) VALUES (?, ?)""", (name, json.dumps(sids)))
+        conn.commit()
+        cursor.close()
+        conn.close()
         return
 
-    def edit_playlist(self):
+    def edit_playlist(self, id:int, sids:list[int]):
+        conn = sqlite3.connect(self.db_filename)
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE PLAYLISTS SET Song_Ids = ? WHERE Id = ?""", (json.dumps(sids), id))
+        conn.commit()
+        cursor.close()
+        conn.close()
         return
 
-    def remove_song(self):
+    def remove_song(self, id:int):
+        conn = sqlite3.connect(self.db_filename)
+        cursor = conn.cursor()
+        cursor.execute("""DELETE FROM SONGS WHERE Id = ?""", (id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        os.remove(str(self.audio_dirname+str(id)+".wav"))
         return
 
-    def remove_playlist(self):
+    def remove_playlist(self, id:int):
+        conn = sqlite3.connect(self.db_filename)
+        cursor = conn.cursor()
+        cursor.execute("""DELETE FROM PLAYLISTS WHERE Id = ?""", (id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
         return
+
+    def data_to_string(self) -> str:
+        #get data
+        conn = sqlite3.connect(self.db_filename)
+        cursor = conn.cursor()
+        cursor.execute("""SELECT * FROM SONGS""")
+        sdata = cursor.fetchall()
+        cursor.execute("""SELECT * FROM PLAYLISTS""")
+        pdata = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+
+        return str(sdata)+str(pdata)

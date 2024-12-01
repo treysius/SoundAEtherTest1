@@ -15,19 +15,46 @@ def main():
 
     #menu to add songs and playlists
     choice = '0'
-    while not choice == "6":
+    while not choice == "7":
         choice = input("1. add new song\n"
                        "2. add new playlist\n"
                        "3. edit playlist\n"
                        "4. remove song\n"
                        "5. remove playlist\n"
-                       "6. start server\n"
-                       "7. exit\n"
+                       "6. list data\n"
+                       "7. start server\n"
+                       "8. exit\n"
                        "Choose an option")
         match choice:
             case "1":
                 db.add_song(input("enter the path to the audio file"), input("enter the name of the song"), input("enter the artist of the song"), input("enter the album of the song"), input("enter the release date of the song"), input("enter the path to the cover image of the song, or -1 if there is none"))
-            case "7":
+
+            case "2":
+                name = input("enter the name of the playlist")
+                sIdStr = input("enter the song ids for the playlist separated by a space")
+                sIds = sIdStr.split()
+                sidList = [ int(x) for x in sIds ]
+                db.add_playlist(name, sidList)
+
+            case "3":
+                id = input("enter the id of the playlist")
+                sIdStr = input("enter the new song ids for the playlist separated by a space")
+                sIds = sIdStr.split()
+                sidList = [int(x) for x in sIds]
+                db.edit_playlist(id, sidList)
+
+            case "4":
+                sid = input("enter the id of the song")
+                db.remove_song(int(sid))
+
+            case "5":
+                pid = input("enter the id of the playlist")
+                db.remove_playlist(int(pid))
+
+            case "6":
+                print(db.data_to_string())
+
+            case "8":
                 return
 
 
